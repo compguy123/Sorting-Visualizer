@@ -56,12 +56,12 @@ function createStepItem(number) {
     imgDiv.classList.add("baby");
     const imgShadow = document.createElement("img");
     imgShadow.classList.add("baby_shadow", "pixelart", "offset-silver");
-    imgShadow.src = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacterShadow.png";
+    imgShadow.src = "assets/SilverShadow.png";
     imgShadow.alt = "Shadow";
 
     const imgChar = document.createElement("img");
     imgChar.classList.add("baby_sprite", "pixelart", "offset-silver");
-    imgChar.src = "https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacter.png";
+    imgChar.src = "assets/SilverSpriteSheet.png";
     imgChar.alt = "Character";
     imgDiv.appendChild(imgShadow);
     imgDiv.appendChild(imgChar);
