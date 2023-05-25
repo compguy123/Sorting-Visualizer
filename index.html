@@ -61,119 +61,44 @@
 
             // 1st row
             (() => {
-                const initialArray = [6, 5, 12, 10, 9, 1];
-                const gen = chunkBySize(initialArray.length / 2, initialArray);
-                const step = document.createElement("section");
-                step.classList.add("step");
-                for (const group of gen) {
-                    const groupDiv = createStepItemGroup(group);
-                    step.appendChild(groupDiv);
-                }
+                const step = createStepSingle([6, 5, 12, 10, 9, 1]);
                 mainEl.appendChild(step);
             })();
 
             // 2nd row
             (() => {
-                const nstep = document.createElement("section");
-                nstep.classList.add("step");
-                (() => {
-                    const ninitialArray = [6, 5, 12];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-
-                (() => {
-                    const ninitialArray = [10, 9, 1];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-                mainEl.appendChild(nstep);
+                const step = createStepMultiple([[6, 5, 12, 10, 9, 1]]);
+                mainEl.appendChild(step);
             })();
 
+            // 3rd row
+            (() => {
+                const step = createStepMultiple([[6, 5, 12], [10, 9, 1]]);
+                mainEl.appendChild(step);
+            })();
 
             // 4th row
             (() => {
-                const nstep = document.createElement("section");
-                nstep.classList.add("step");
-                (() => {
-                    const ninitialArray = [6];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-                (() => {
-                    const ninitialArray = [5, 12];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-
-                (() => {
-                    const ninitialArray = [10];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-                (() => {
-                    const ninitialArray = [9, 1];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-                mainEl.appendChild(nstep);
+                const step = createStepMultiple([[6], [5, 12], [10], [9, 1]]);
+                mainEl.appendChild(step);
             })();
 
             // 5th row
             (() => {
-                const nstep = document.createElement("section");
-                nstep.classList.add("step");
-                (() => {
-                    const ninitialArray = [6, 5, 12];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-
-                (() => {
-                    const ninitialArray = [10, 1, 9];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-                mainEl.appendChild(nstep);
+                const step = createStepMultiple([[6, 5, 12], [10, 1, 9]]);
+                mainEl.appendChild(step);
             })();
-            
+
             // 6th row
             (() => {
-                const nstep = document.createElement("section");
-                nstep.classList.add("step");
-                (() => {
-                    const ninitialArray = [5, 6, 12, 1, 9, 10];
-                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
-                    for (const group of ngen) {
-                        const groupDiv = createStepItemGroup(group);
-                        nstep.appendChild(groupDiv);
-                    }
-                })();
-                mainEl.appendChild(nstep);
+                const step = createStepMultiple([[5, 6, 12, 1, 9, 10]]);
+                mainEl.appendChild(step);
+            })();
+
+            // 7th row
+            (() => {
+                const step = createStepSingle([1, 5, 6, 9, 10, 12]);
+                mainEl.appendChild(step);
             })();
 
             /**
@@ -206,7 +131,7 @@
             /**
              * @function
              * @param {number[]} numbers
-             * @return {HTMLDivElement[]}
+             * @return {HTMLDivElement}
              **/
             function createStepItemGroup(numbers) {
                 const div = document.createElement("div");
@@ -223,12 +148,42 @@
              * @param {number[]} array
              * @return {HTMLElement}
              **/
-            function createStep(array) {
-                const groups = [...chunkBySize(array.length / 2, array)];
+            function addGroupToStep(array, step, shouldSplit = true) {
+                const groups = chunkBySize(shouldSplit ? array.length / 2 : array.length, array);
                 for (const group of groups) {
                     const groupDiv = createStepItemGroup(group);
-                    mainEl.appendChild(groupDiv);
+                    if (groupDiv.children?.length === 0) {
+                        continue;
+                    }
+                    step.appendChild(groupDiv);
                 }
+                return step;
+            }
+
+            /**
+             * @function
+             * @param {number[]} array
+             * @return {HTMLElement}
+             **/
+            function createStepSingle(array) {
+                const step = document.createElement("section");
+                step.classList.add("step");
+                addGroupToStep(array, step, false);
+                return step;
+            }
+
+            /**
+             * @function
+             * @param {number[][]} arrays
+             * @return {HTMLElement}
+             **/
+            function createStepMultiple(arrays) {
+                const step = document.createElement("section");
+                step.classList.add("step");
+                for (const array of arrays) {
+                    addGroupToStep(array, step);
+                }
+                return step;
             }
         })();
     </script>
