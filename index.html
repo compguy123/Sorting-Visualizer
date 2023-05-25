@@ -59,47 +59,15 @@
         (() => {
             const mainEl = document.querySelector("#sorting-visual");
 
-            // 1st row
-            (() => {
-                const step = createStepSingle([6, 5, 12, 10, 9, 1]);
-                mainEl.appendChild(step);
-            })();
-
-            // 2nd row
-            (() => {
-                const step = createStepMultiple([[6, 5, 12, 10, 9, 1]]);
-                mainEl.appendChild(step);
-            })();
-
-            // 3rd row
-            (() => {
-                const step = createStepMultiple([[6, 5, 12], [10, 9, 1]]);
-                mainEl.appendChild(step);
-            })();
-
-            // 4th row
-            (() => {
-                const step = createStepMultiple([[6], [5, 12], [10], [9, 1]]);
-                mainEl.appendChild(step);
-            })();
-
-            // 5th row
-            (() => {
-                const step = createStepMultiple([[6, 5, 12], [10, 1, 9]]);
-                mainEl.appendChild(step);
-            })();
-
-            // 6th row
-            (() => {
-                const step = createStepMultiple([[5, 6, 12, 1, 9, 10]]);
-                mainEl.appendChild(step);
-            })();
-
-            // 7th row
-            (() => {
-                const step = createStepSingle([1, 5, 6, 9, 10, 12]);
-                mainEl.appendChild(step);
-            })();
+            createVisualSortTree(mainEl, [
+                [6, 5, 12, 10, 9, 1],
+                [[6, 5, 12, 10, 9, 1]],
+                [[6, 5, 12], [10, 9, 1]],
+                [[6], [5, 12], [10], [9, 1]],
+                [[6, 5, 12], [10, 1, 9]],
+                [[5, 6, 12, 1, 9, 10]],
+                [1, 5, 6, 9, 10, 12],
+            ]);
 
             /**
              * @function
@@ -148,7 +116,7 @@
              * @param {number[]} array
              * @return {HTMLElement}
              **/
-            function addGroupToStep(array, step, shouldSplit = true) {
+            function addGroupToStep(step, array, shouldSplit = true) {
                 const groups = chunkBySize(shouldSplit ? array.length / 2 : array.length, array);
                 for (const group of groups) {
                     const groupDiv = createStepItemGroup(group);
@@ -168,7 +136,7 @@
             function createStepSingle(array) {
                 const step = document.createElement("section");
                 step.classList.add("step");
-                addGroupToStep(array, step, false);
+                addGroupToStep(step, array, false);
                 return step;
             }
 
@@ -181,9 +149,26 @@
                 const step = document.createElement("section");
                 step.classList.add("step");
                 for (const array of arrays) {
-                    addGroupToStep(array, step);
+                    addGroupToStep(step, array);
                 }
                 return step;
+            }
+
+            /**
+             * @function
+             * @param {number[][][]} arrayOfSteps
+             * @param {HTMLElement} mainEl
+             * @return {void}
+             **/
+            function createVisualSortTree(mainEl, arrayOfSteps) {
+                for (let i = 0; i < arrayOfSteps.length; i++) {
+                    const stepArray = arrayOfSteps[i];
+                    const stepEl = i === 0 || i === arrayOfSteps.length - 1
+                        ? createStepSingle(stepArray.flat())
+                        : createStepMultiple(stepArray);
+
+                    mainEl.appendChild(stepEl);
+                }
             }
         })();
     </script>
