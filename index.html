@@ -6,6 +6,38 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" type="text/css" href="/css/mergeSort.css">
+    <style>
+        #sorting-visual {
+            display: flex;
+            width: 100%;
+            flex-flow: column;
+            gap: 5rem;
+        }
+
+        .step {
+            display: flex;
+            justify-content: space-between;
+            margin: auto;
+            border-radius: 0.5rem;
+            gap: 2rem;
+        }
+
+        .group {
+            display: flex;
+            justify-content: space-between;
+            border-radius: 0.5rem;
+        }
+
+        .g-item {
+            padding: 0.5rem;
+            background-color: rgb(10, 158, 226);
+            border: 0.01rem solid white;
+            color: white;
+            font-size: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+    </style>
     <title>Sorting Visualizer</title>
 </head>
 
@@ -14,10 +46,192 @@
         <h1>Merge Sort</h1>
     </div>
 
+    <main id="sorting-visual">
+    </main>
+
     <div class="baby">
         <img class="baby_shadow pixelart " src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacterShadow.png" alt="Shadow" />
         <img class="baby_sprite pixelart face-right" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacter.png" alt="Character" />
     </div>
+
+
+    <script defer>
+        (() => {
+            const mainEl = document.querySelector("#sorting-visual");
+
+            // 1st row
+            (() => {
+                const initialArray = [6, 5, 12, 10, 9, 1];
+                const gen = chunkBySize(initialArray.length / 2, initialArray);
+                const step = document.createElement("section");
+                step.classList.add("step");
+                for (const group of gen) {
+                    const groupDiv = createStepItemGroup(group);
+                    step.appendChild(groupDiv);
+                }
+                mainEl.appendChild(step);
+            })();
+
+            // 2nd row
+            (() => {
+                const nstep = document.createElement("section");
+                nstep.classList.add("step");
+                (() => {
+                    const ninitialArray = [6, 5, 12];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+
+                (() => {
+                    const ninitialArray = [10, 9, 1];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+                mainEl.appendChild(nstep);
+            })();
+
+
+            // 4th row
+            (() => {
+                const nstep = document.createElement("section");
+                nstep.classList.add("step");
+                (() => {
+                    const ninitialArray = [6];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+                (() => {
+                    const ninitialArray = [5, 12];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+
+                (() => {
+                    const ninitialArray = [10];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+                (() => {
+                    const ninitialArray = [9, 1];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+                mainEl.appendChild(nstep);
+            })();
+
+            // 5th row
+            (() => {
+                const nstep = document.createElement("section");
+                nstep.classList.add("step");
+                (() => {
+                    const ninitialArray = [6, 5, 12];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+
+                (() => {
+                    const ninitialArray = [10, 1, 9];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+                mainEl.appendChild(nstep);
+            })();
+            
+            // 6th row
+            (() => {
+                const nstep = document.createElement("section");
+                nstep.classList.add("step");
+                (() => {
+                    const ninitialArray = [5, 6, 12, 1, 9, 10];
+                    const ngen = chunkBySize(ninitialArray.length / 2, ninitialArray);
+                    for (const group of ngen) {
+                        const groupDiv = createStepItemGroup(group);
+                        nstep.appendChild(groupDiv);
+                    }
+                })();
+                mainEl.appendChild(nstep);
+            })();
+
+            /**
+             * @function
+             * @template T
+             * @param {number} chunkSize
+             * @param {T[]} array
+             **/
+            function* chunkBySize(chunkSize, array) {
+                for (let i = 0; i < array.length; i += chunkSize) {
+                    const chunk = array.slice(i, i + chunkSize);
+                    yield chunk;
+                }
+            }
+
+            /**
+             * @function
+             * @param {number} number
+             * @return {HTMLDivElement}
+             **/
+            function createStepItem(number) {
+                const div = document.createElement("div");
+                const span = document.createElement("span");
+                div.classList.add("g-item");
+                span.textContent = number;
+                div.appendChild(span);
+                return div;
+            }
+
+            /**
+             * @function
+             * @param {number[]} numbers
+             * @return {HTMLDivElement[]}
+             **/
+            function createStepItemGroup(numbers) {
+                const div = document.createElement("div");
+                div.classList.add("group");
+                const children = numbers.map(x => createStepItem(x));
+                for (const child of children) {
+                    div.appendChild(child);
+                }
+                return div;
+            }
+
+            /**
+             * @function
+             * @param {number[]} array
+             * @return {HTMLElement}
+             **/
+            function createStep(array) {
+                const groups = [...chunkBySize(array.length / 2, array)];
+                for (const group of groups) {
+                    const groupDiv = createStepItemGroup(group);
+                    mainEl.appendChild(groupDiv);
+                }
+            }
+        })();
+    </script>
 </body>
 
 </html>
