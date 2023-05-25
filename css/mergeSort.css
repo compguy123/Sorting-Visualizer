@@ -36,4 +36,6 @@
 .offset-silver {
     left: -7px;
     top: -10px;
+    user-select: none;
+    pointer-events: none;
 }
