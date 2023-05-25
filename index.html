@@ -5,209 +5,23 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" type="text/css" href="/css/mergeSort.css">
-    <style>
-        #sorting-visual {
-            display: flex;
-            flex-flow: column;
-            gap: 1rem;
-        }
-
-        .step {
-            display: flex;
-            justify-content: space-between;
-            gap: 2rem;
-            margin: auto;
-        }
-
-        .group {
-            display: flex;
-            justify-content: space-between;
-            border-radius: 0.5rem;
-            background-color: rgb(10, 158, 226);
-        }
-
-        .g-item {
-            width: 2rem;
-
-            padding: 0.25rem;
-
-            border: 0.1rem solid white;
-            border-collapse: collapse;
-
-            text-align: center;
-            font-family: monospace;
-            font-weight: 700;
-            font-size: 1.25rem;
-            color: white;
-        }
-
-    </style>
+    <link rel="stylesheet" type="text/css" href="css/main.css">
+    <link rel="stylesheet" type="text/css" href="css/mergeSort.css">
+    <script src="js/mergeSort.js" type="module" defer></script>
     <title>Sorting Visualizer</title>
 </head>
 
 <body>
     <div class="sortName">
-        <h1>Merge Sort</h1>
+        <h1 id="sort-title">Merge Sort</h1>
     </div>
 
-    <main id="sorting-visual">
-    </main>
+    <main id="sorting-visual"></main>
 
     <div class="baby">
-        <img class="baby_shadow pixelart " src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacterShadow.png" alt="Shadow" />
+        <img class="baby_shadow pixelart" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacterShadow.png" alt="Shadow" />
         <img class="baby_sprite pixelart face-right" src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/21542/DemoRpgCharacter.png" alt="Character" />
     </div>
-
-
-    <script defer>
-        // function merge(left, right) {
-        //     let arr = [];
-        //     // Break out of loop if any one of the array gets empty
-        //     while (left.length && right.length) {
-        //         // Pick the smaller among the smallest element of left and right sub arrays 
-        //         if (left[0] < right[0]) {
-        //             arr.push(left.shift());
-        //         } else {
-        //             arr.push(right.shift());
-        //         }
-        //     }
-        //     // console.log("arr", arr, "left", left, "right", right);
-
-        //     // Concatenating the leftover elements
-        //     // (in case we didn't go through the entire left or right array)
-        //     return [...arr, ...left, ...right];
-        // }
-        // function mergeSort(array) {
-        //     const half = array.length / 2;
-
-        //     // Base case or terminating case
-        //     if (array.length < 2) {
-        //         return array;
-        //     }
-
-        //     const left = array.splice(0, half);
-        //     // console.log("left", left, "right", array);
-        //     return merge(mergeSort(left), mergeSort(array));
-        // }
-        (() => {
-            const mainEl = document.querySelector("#sorting-visual");
-
-            createVisualSortTree(mainEl, [
-                [6, 5, 12, 10, 9, 1],
-                [[6, 5, 12, 10, 9, 1]],
-                [[6, 5, 12], [10, 9, 1]],
-                [[6], [5, 12], [10], [9, 1]],
-                [[6, 5, 12], [10, 1, 9]],
-                [[5, 6, 12, 1, 9, 10]],
-                [1, 5, 6, 9, 10, 12],
-            ]);
-
-            /**
-             * @function
-             * @template T
-             * @param {number} chunkSize
-             * @param {T[]} array
-             * @return {Generator<T[], void, unknown>}
-             **/
-            function* chunkBySize(chunkSize, array) {
-                for (let i = 0; i < array.length; i += chunkSize) {
-                    const chunk = array.slice(i, i + chunkSize);
-                    yield chunk;
-                }
-            }
-
-            /**
-             * @function
-             * @param {number} number
-             * @return {HTMLDivElement}
-             **/
-            function createStepItem(number) {
-                const div = document.createElement("div");
-                const span = document.createElement("span");
-                div.classList.add("g-item");
-                span.textContent = number;
-                div.appendChild(span);
-                return div;
-            }
-
-            /**
-             * @function
-             * @param {number[]} numbers
-             * @return {HTMLDivElement}
-             **/
-            function createStepItemGroup(numbers) {
-                const div = document.createElement("div");
-                div.classList.add("group");
-                const children = numbers.map(x => createStepItem(x));
-                for (const child of children) {
-                    div.appendChild(child);
-                }
-                return div;
-            }
-
-            /**
-             * @function
-             * @param {HTMLElement} step
-             * @param {number[]} array
-             * @param {boolean} shouldSplit
-             * @return {void}
-             **/
-            function addGroupToStep(step, array, shouldSplit = true) {
-                const groups = chunkBySize(shouldSplit ? array.length / 2 : array.length, array);
-                for (const group of groups) {
-                    const groupDiv = createStepItemGroup(group);
-                    if (groupDiv.children?.length === 0) {
-                        continue;
-                    }
-                    step.appendChild(groupDiv);
-                }
-            }
-
-            /**
-             * @function
-             * @param {number[]} array
-             * @return {HTMLElement}
-             **/
-            function createStepSingle(array) {
-                const step = document.createElement("section");
-                step.classList.add("step");
-                addGroupToStep(step, array, false);
-                return step;
-            }
-
-            /**
-             * @function
-             * @param {number[][]} arrays
-             * @return {HTMLElement}
-             **/
-            function createStepMultiple(arrays) {
-                const step = document.createElement("section");
-                step.classList.add("step");
-                for (const array of arrays) {
-                    addGroupToStep(step, array);
-                }
-                return step;
-            }
-
-            /**
-             * @function
-             * @param {HTMLElement} mainEl
-             * @param {number[][][]} arrayOfSteps
-             * @return {void}
-             **/
-            function createVisualSortTree(mainEl, arrayOfSteps) {
-                for (let i = 0; i < arrayOfSteps.length; i++) {
-                    const stepArray = arrayOfSteps[i];
-                    const stepEl = i === 0 || i === arrayOfSteps.length - 1
-                        ? createStepSingle(stepArray.flat())
-                        : createStepMultiple(stepArray);
-
-                    mainEl.appendChild(stepEl);
-                }
-            }
-        })();
-    </script>
 </body>
 
 </html>
