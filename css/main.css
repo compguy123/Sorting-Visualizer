@@ -39,7 +39,6 @@
   animation: moveBaby 1s steps(4) infinite;
   width: calc(128px * var(--pixel-size));
   position: absolute;
-
 }
 
 .baby_shadow {

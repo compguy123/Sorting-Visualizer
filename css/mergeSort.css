@@ -19,7 +19,7 @@
 }
 
 .g-item {
-    width: 2rem;
+    width: 3rem;
 
     padding: 0.25rem;
 
@@ -31,4 +31,9 @@
     font-weight: 700;
     font-size: 1.25rem;
     color: white;
+}
+
+.offset-silver {
+    left: -7px;
+    top: -10px;
 }
