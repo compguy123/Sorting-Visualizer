@@ -1,5 +1,6 @@
 :root {
-  --pixel-size: 6;
+  --pixel-size-silver: 3;
+  --pixel-size-baby:2;
 }
 
 .sortName {
@@ -22,45 +23,71 @@
   padding: 10px;
 }
 
-
 .baby{
-  width: calc(32px * var(--pixel-size));
-  height: calc(32px * var(--pixel-size));
+  width: calc(32px * var(--pixel-size-baby));
+  height: calc(32px * var(--pixel-size-baby));
   overflow: hidden;
   position: relative;
-  margin: 4em auto;
 }
-
 
 .baby_sprite{
-  animation: moveBaby 1s steps(4) infinite;
-  width: calc(128px * var(--pixel-size));
+  animation: moveSilver 1s steps(4) infinite;
+  width: calc(128px * var(--pixel-size-baby));
+  position: absolute;
+
+}
+.silver{
+  width: calc(32px * var(--pixel-size-silver));
+  height: calc(32px * var(--pixel-size-silver));
+  overflow: hidden;
+  position: relative;
+
+  /* margin: 4em auto; */
+}
+
+*{border: 1px solid red;}
+.silver_man{
+  animation: moveSilver 1s steps(4) infinite;
+  width: calc(128px * var(--pixel-size-silver));
   position: absolute;
 
 }
 
-.baby_shadow{
+.silver_shadow{
   position: absolute;
-   width: calc(32px * var(--pixel-size));
-   height: calc(32px * var(--pixel-size));
+   width: calc(32px * var(--pixel-size-silver));
+   height: calc(32px * var(--pixel-size-silver));
 }
 
 .pixelart {
   image-rendering: pixelated;
 }
 
-.face-right {
-  top: calc(-32px * var(--pixel-size));
+
+
+.face-right-silver {
+  top: calc(-32px * var(--pixel-size-silver));
 }
-.face-up {
-  top: calc(-64px * var(--pixel-size));
+.face-up-silver {
+  top: calc(-64px * var(--pixel-size-silver));
 }
-.face-left {
-  top: calc(-96px * var(--pixel-size));
+.face-left-silver {
+  top: calc(-96px * var(--pixel-size-silver));
 }
 
 
-@keyframes moveBaby {
+.face-right-baby {
+  top: calc(-96px * var(--pixel-size-baby));
+}
+.face-up-baby {
+  top: calc(-32px * var(--pixel-size-baby));
+}
+.face-left-baby {
+ 
+  top: calc(-64px * var(--pixel-size-baby));
+}
+
+@keyframes moveSilver {
   from{
     transform: translate3d(0px,0,0);
   }
