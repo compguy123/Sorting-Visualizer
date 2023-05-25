@@ -108,6 +108,7 @@
              * @template T
              * @param {number} chunkSize
              * @param {T[]} array
+             * @return {Generator<T[], void, unknown>}
              **/
             function* chunkBySize(chunkSize, array) {
                 for (let i = 0; i < array.length; i += chunkSize) {
@@ -147,7 +148,9 @@
 
             /**
              * @function
+             * @param {HTMLElement} step
              * @param {number[]} array
+             * @param {boolean} shouldSplit
              * @return {void}
              **/
             function addGroupToStep(step, array, shouldSplit = true) {
@@ -189,8 +192,8 @@
 
             /**
              * @function
-             * @param {number[][][]} arrayOfSteps
              * @param {HTMLElement} mainEl
+             * @param {number[][][]} arrayOfSteps
              * @return {void}
              **/
             function createVisualSortTree(mainEl, arrayOfSteps) {
