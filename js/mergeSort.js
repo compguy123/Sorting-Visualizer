@@ -1,6 +1,5 @@
 // @ts-check
 import * as images from "./images.js";
-import { chunkBySize } from "./util.js";
 
 /**
  * @param {number[]} left
@@ -81,28 +80,14 @@ function createStepItemGroup(numbers) {
 /**
  * @param {HTMLElement} step
  * @param {number[]} array
- * @param {boolean} shouldSplit
  **/
-function addGroupToStep(step, array, shouldSplit = true) {
-    const groups = chunkBySize(shouldSplit ? array.length / 2 : array.length, array);
-    for (const group of groups) {
-        const groupDiv = createStepItemGroup(group);
-        if (groupDiv.children?.length === 0) {
-            continue;
-        }
-        step.appendChild(groupDiv);
+function addGroupToStep(step, array) {
+    const group = array;
+    const groupDiv = createStepItemGroup(group);
+    if (groupDiv.children?.length === 0) {
+        return;
     }
-}
-
-/**
- * Creates a step with a single group
- * @param {number[]} array
- **/
-function createStepSingle(array) {
-    const step = document.createElement("section");
-    step.classList.add("step");
-    addGroupToStep(step, array, false);
-    return step;
+    step.appendChild(groupDiv);
 }
 
 /**
@@ -126,10 +111,7 @@ function createStepMultiple(arrays) {
 function createVisualSortTree(mainEl, arrayOfSteps) {
     for (let i = 0; i < arrayOfSteps.length; i++) {
         const stepArray = arrayOfSteps[i];
-        const stepEl = i === 0 || i === arrayOfSteps.length - 1
-            ? createStepSingle(stepArray.flat())
-            : createStepMultiple(stepArray);
-
+        const stepEl = createStepMultiple(stepArray);
         mainEl.appendChild(stepEl);
     }
 }
@@ -147,11 +129,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     createVisualSortTree(mainEl, [
         [[6, 5, 12, 10, 9, 1]],
-        [[6, 5, 12, 10, 9, 1]],
         [[6, 5, 12], [10, 9, 1]],
         [[6], [5, 12], [10], [9, 1]],
-        [[6, 5, 12], [10, 1, 9]],
-        [[5, 6, 12, 1, 9, 10]],
+        [[6], [5], [12], [10], [9], [1]],
+        [[6], [5, 12], [10], [1, 9]],
+        [[5, 6, 12], [1, 9, 10]],
         [[1, 5, 6, 9, 10, 12]],
     ]);
 });
