@@ -114,7 +114,7 @@
             /**
              * @function
              * @param {number[]} array
-             * @return {HTMLElement}
+             * @return {void}
              **/
             function addGroupToStep(step, array, shouldSplit = true) {
                 const groups = chunkBySize(shouldSplit ? array.length / 2 : array.length, array);
@@ -125,7 +125,6 @@
                     }
                     step.appendChild(groupDiv);
                 }
-                return step;
             }
 
             /**
