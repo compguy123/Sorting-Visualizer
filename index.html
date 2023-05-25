@@ -9,32 +9,37 @@
     <style>
         #sorting-visual {
             display: flex;
-            width: 100%;
             flex-flow: column;
-            gap: 5rem;
+            gap: 1rem;
         }
 
         .step {
             display: flex;
             justify-content: space-between;
-            margin: auto;
-            border-radius: 0.5rem;
             gap: 2rem;
+            margin: auto;
         }
 
         .group {
             display: flex;
             justify-content: space-between;
             border-radius: 0.5rem;
+            background-color: rgb(10, 158, 226);
         }
 
         .g-item {
-            padding: 0.5rem;
-            background-color: rgb(10, 158, 226);
-            border: 0.01rem solid white;
+            width: 2rem;
+
+            padding: 0.25rem;
+
+            border: 0.1rem solid white;
+            border-collapse: collapse;
+
+            text-align: center;
+            font-family: monospace;
+            font-weight: 700;
+            font-size: 1.25rem;
             color: white;
-            font-size: 2rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
     </style>
@@ -56,6 +61,35 @@
 
 
     <script defer>
+        // function merge(left, right) {
+        //     let arr = [];
+        //     // Break out of loop if any one of the array gets empty
+        //     while (left.length && right.length) {
+        //         // Pick the smaller among the smallest element of left and right sub arrays 
+        //         if (left[0] < right[0]) {
+        //             arr.push(left.shift());
+        //         } else {
+        //             arr.push(right.shift());
+        //         }
+        //     }
+        //     // console.log("arr", arr, "left", left, "right", right);
+
+        //     // Concatenating the leftover elements
+        //     // (in case we didn't go through the entire left or right array)
+        //     return [...arr, ...left, ...right];
+        // }
+        // function mergeSort(array) {
+        //     const half = array.length / 2;
+
+        //     // Base case or terminating case
+        //     if (array.length < 2) {
+        //         return array;
+        //     }
+
+        //     const left = array.splice(0, half);
+        //     // console.log("left", left, "right", array);
+        //     return merge(mergeSort(left), mergeSort(array));
+        // }
         (() => {
             const mainEl = document.querySelector("#sorting-visual");
 
