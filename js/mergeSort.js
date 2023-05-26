@@ -1,50 +1,6 @@
 // @ts-check
 import * as images from "./images.js";
 
-/**
- * @param {number[]} left
- * @param {number[]} right
- */
-function merge(left, right) {
-    /** @type {number[]} */
-    let arr = [];
-    // Break out of loop if any one of the array gets empty
-    while (left.length && right.length) {
-        // Pick the smaller among the smallest element of left and right sub arrays
-        if (left[0] < right[0]) {
-            const l = left.shift();
-            if (l === undefined) throw new Error("this shouldn't happen.");
-            arr.push(l);
-        } else {
-            const r = right.shift();
-            if (r === undefined) throw new Error("this shouldn't happen.");
-            arr.push(r);
-        }
-    }
-    // console.log("arr", arr, "left", left, "right", right);
-
-    // Concatenating the leftover elements
-    // (in case we didn't go through the entire left or right array)
-    return [...arr, ...left, ...right];
-}
-
-/**
- * @param {number[]} array
- * @returns {number[]}
- */
-export function mergeSort(array) {
-    const half = array.length / 2;
-
-    // Base case or terminating case
-    if (array.length < 2) {
-        return array;
-    }
-
-    const left = array.splice(0, half);
-    // console.log("left", left, "right", array);
-    return merge(mergeSort(left), mergeSort(array));
-}
-
 const imgGetter = images.createImgGetter();
 /**
  * Creates an element of a group

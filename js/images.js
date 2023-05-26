@@ -1,3 +1,5 @@
+import { sorting } from "./util.js";
+
 /**
  * @param {"blue" | "silver" | "gold" | "pink" | "green" | "red" | "beige"} colour 
  */
@@ -37,8 +39,10 @@ export function getAllBabyFunc() {
 export function createImgGetter() {
     const dict = {};
     const imgPicker = (function* () {
+        const imgs = getAllBabyFunc();
+        imgs.sort(sorting.random);
         while (true) {
-            for (const imgFunc of getAllBabyFunc()) {
+            for (const imgFunc of imgs) {
                 yield imgFunc;
             }
         }
