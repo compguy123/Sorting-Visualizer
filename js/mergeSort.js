@@ -45,6 +45,7 @@ export function mergeSort(array) {
     return merge(mergeSort(left), mergeSort(array));
 }
 
+const imgGetter = images.createImgGetter();
 /**
  * Creates an element of a group
  * @param {number} number
@@ -59,7 +60,8 @@ function createStepItem(number, id = null) {
     }
     div.dataset.value = number.toString();
 
-    const imgDiv = images.createSilver();
+    const imgFunc = imgGetter(number);
+    const imgDiv = imgFunc();
     div.appendChild(imgDiv);
 
     const span = document.createElement("span");
