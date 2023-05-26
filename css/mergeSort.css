@@ -1,7 +1,10 @@
 :root {
   --pixel-size-silver: 3;
   --pixel-size-baby:2;
+  --pixel-size-boy:2;
 }
+
+*{border: 1px solid red;}
 
 .sortName {
     display: flex;
@@ -45,7 +48,7 @@
   /* margin: 4em auto; */
 }
 
-*{border: 1px solid red;}
+
 .silver_man{
   animation: moveSilver 1s steps(4) infinite;
   width: calc(128px * var(--pixel-size-silver));
@@ -57,6 +60,21 @@
   position: absolute;
    width: calc(32px * var(--pixel-size-silver));
    height: calc(32px * var(--pixel-size-silver));
+}
+
+
+.boy{
+  width: calc(32px * var(--pixel-size-boy));
+  height: calc(32px * var(--pixel-size-boy));
+  overflow: hidden;
+  position: relative;
+}
+
+.boy_sprite{
+  animation: moveSilver 1s steps(4) infinite;
+  width: calc(128px * var(--pixel-size-boy));
+  position: absolute;
+
 }
 
 .pixelart {
@@ -85,6 +103,17 @@
 .face-left-baby {
  
   top: calc(-64px * var(--pixel-size-baby));
+}
+
+.face-right-boy {
+  top: calc(-96px * var(--pixel-size-boy));
+}
+.face-up-boy {
+  top: calc(-32px * var(--pixel-size-boy));
+}
+.face-left-boy {
+ 
+  top: calc(-64px * var(--pixel-size-boy));
 }
 
 @keyframes moveSilver {
