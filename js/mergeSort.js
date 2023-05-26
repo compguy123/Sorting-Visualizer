@@ -48,15 +48,21 @@ export function mergeSort(array) {
 /**
  * Creates an element of a group
  * @param {number} number
+ * @param {number | null} id
  **/
-function createStepItem(number) {
+function createStepItem(number, id = null) {
     const div = document.createElement("div");
+    div.classList.add("g-item");
+    if (id !== null) {
+        div.classList.add(`g-item-${id}`);
+        div.dataset.index = id.toString();
+    }
+    div.dataset.value = number.toString();
 
     const imgDiv = images.createSilver();
     div.appendChild(imgDiv);
 
     const span = document.createElement("span");
-    div.classList.add("g-item");
     span.textContent = number.toString();
     div.appendChild(span);
 
@@ -66,11 +72,16 @@ function createStepItem(number) {
 /**
  * Creates a group of a step
  * @param {number[]} numbers
+ * @param {number | null} id
  **/
-function createStepItemGroup(numbers) {
+function createStepItemGroup(numbers, id = null) {
     const div = document.createElement("div");
     div.classList.add("group");
-    const children = numbers.map(x => createStepItem(x));
+    if (id !== null) {
+        div.classList.add(`group-${id}`);
+        div.dataset.index = id.toString();
+    }
+    const children = numbers.map((x, i) => createStepItem(x, i));
     for (const child of children) {
         div.appendChild(child);
     }
@@ -80,10 +91,11 @@ function createStepItemGroup(numbers) {
 /**
  * @param {HTMLElement} step
  * @param {number[]} array
+ * @param {number | null} id
  **/
-function addGroupToStep(step, array) {
+function addGroupToStep(step, array, id = null) {
     const group = array;
-    const groupDiv = createStepItemGroup(group);
+    const groupDiv = createStepItemGroup(group, id);
     if (groupDiv.children?.length === 0) {
         return;
     }
@@ -93,12 +105,18 @@ function addGroupToStep(step, array) {
 /**
  * Creates a step with multiple groups
  * @param {number[][]} arrays
+ * @param {number | null} id
  **/
-function createStepMultiple(arrays) {
+function createStepMultiple(arrays, id = null) {
     const step = document.createElement("section");
     step.classList.add("step");
+    if (id !== null) {
+        step.classList.add(`step-${id}`);
+        step.dataset.index = id.toString();
+    }
+    let groupCounter = 0;
     for (const array of arrays) {
-        addGroupToStep(step, array);
+        addGroupToStep(step, array, groupCounter++);
     }
     return step;
 }
@@ -111,7 +129,7 @@ function createStepMultiple(arrays) {
 function createVisualSortTree(mainEl, arrayOfSteps) {
     for (let i = 0; i < arrayOfSteps.length; i++) {
         const stepArray = arrayOfSteps[i];
-        const stepEl = createStepMultiple(stepArray);
+        const stepEl = createStepMultiple(stepArray, i);
         mainEl.appendChild(stepEl);
     }
 }
@@ -136,4 +154,35 @@ document.addEventListener("DOMContentLoaded", () => {
         [[5, 6, 12], [1, 9, 10]],
         [[1, 5, 6, 9, 10, 12]],
     ]);
+
+    const sourceImpl = `function merge(left, right) {
+    let arr = [];
+    // Break out of loop if any one of the array gets empty
+    while (left.length && right.length) {
+        // Pick the smaller among the smallest element of left and right sub arrays
+        if (left[0] < right[0]) {
+            arr.push(left.shift());
+        } else {
+            arr.push(right.shift());
+        }
+    }
+    // Concatenating the leftover elements
+    // (in case we didn't go through the entire left or right array)
+    return [...arr, ...left, ...right];
+}
+
+function mergeSort(array) {
+    const half = array.length / 2;
+    // Base case or terminating case
+    if (array.length < 2) {
+        return array;
+    }
+    const left = array.splice(0, half);
+    return merge(mergeSort(left), mergeSort(array));
+}`;
+
+    const implementationEl = document.querySelector("#implementation");
+    if (!implementationEl) throw new Error("failed to find #implementation html element");
+
+    implementationEl.textContent = sourceImpl;
 });
