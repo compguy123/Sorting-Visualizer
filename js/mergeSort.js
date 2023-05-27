@@ -110,7 +110,7 @@ function* mergeSortStepGenerator(numbers) {
     while (innerMaxLength !== 1) {
         //should only hit this once (this should always create the 3rd last step)
         if (temp.filter(x => x.length === 3).length > temp.filter(x => x.length !== 3).length) {
-            var twoChunked = temp.flatMap(x => chunk(2, x));
+            const twoChunked = temp.flatMap(x => chunk(2, x));
             innerMaxLength = maxBy(twoChunked, x => x.length);
             yield deepClone(twoChunked);
             temp = twoChunked;
@@ -118,7 +118,7 @@ function* mergeSortStepGenerator(numbers) {
             continue;
         }
 
-        var chunked = temp.flatMap(x => chunk(Math.max(x.length / 2, 1), x));
+        const chunked = temp.flatMap(x => chunk(Math.max(x.length / 2, 1), x));
         innerMaxLength = maxBy(chunked, x => x.length);
         yield deepClone(chunked);
         temp = chunked;
@@ -133,7 +133,7 @@ function* mergeSortStepGenerator(numbers) {
     temp = [];
     tracker.pop();
     tracker.reverse();
-    for (var t of tracker) {
+    for (const t of tracker) {
         t.forEach(x => x.sort(sorting.ascending));
         yield t;
     }
