@@ -97,11 +97,16 @@ function createVisualSortTree(mainEl, arrayOfSteps) {
  * @param {number[][]} numbers
  */
 function* mergeSortStepGenerator(numbers) {
+    if (!numbers || numbers.length <= 0 || numbers[0].length <= 0) {
+        return [];
+    }
+
     /** @type {number[][][]} */
     const tracker = [];
 
-    // deep clone to avoid external mutation
-    let temp = deepClone(numbers);
+    // deep clone to avoid external mutation and ensure unique values
+    let temp = deepClone(numbers).map(x => Array.from(new Set(x)));
+
     // return steps that break up the elements into groups/chunks
     yield deepClone(temp);
     tracker.push(temp);
@@ -186,9 +191,9 @@ document.addEventListener("DOMContentLoaded", () => {
     //     [[1, 5, 6, 9, 10, 12]],
     // ]);
 
-    const input = [[6, 5, 12, 10, 9, 1]];
-    const steps = mergeSortStepGenerator(input);
-    createVisualSortTree(mainEl, [...steps]);
+    const input = [[94, 12, 5, 34, 9, 21, 1]];
+    const steps = [...mergeSortStepGenerator(input)];
+    createVisualSortTree(mainEl, steps);
 
     const sourceImpl = `function merge(left, right) {
     let arr = [];
