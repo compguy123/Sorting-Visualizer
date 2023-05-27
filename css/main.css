@@ -1,11 +1,11 @@
 :root {
-  --pixel-size-silver: 3;
+  --pixel-size-silver: 2;
   --pixel-size-baby: 2;
   --pixel-size-boy: 2;
 }
 
 * {
-  border: 1px solid red;
+  /* border: 1px solid red; */
 }
 
 .sortName {
