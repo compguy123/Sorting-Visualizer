@@ -36,6 +36,7 @@ function getAllSilverFunc() {
         "red",
         "beige",
     ];
+    // @ts-ignore
     return colours.map(x => () => createSilverSprite(x));
 }
 
