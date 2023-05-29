@@ -1,13 +1,14 @@
+// @ts-check
 import { sorting } from "./util.js";
 
 /**
  * @param {"blue" | "silver" | "gold" | "pink" | "green" | "red" | "beige"} colour 
  */
-function createBabySprite(colour) {
+function createSilverSprite(colour) {
     const imgDiv = document.createElement("div");
-    imgDiv.classList.add("baby");
+    imgDiv.classList.add("silver");
     const imgShadow = document.createElement("img");
-    imgShadow.classList.add("baby_shadow", "pixelart", "offset-silver");
+    imgShadow.classList.add("silver_shadow", "pixelart", "offset-silver");
     imgShadow.src = "assets/SilverShadow.png";
     imgShadow.alt = "Shadow";
 
@@ -17,14 +18,15 @@ function createBabySprite(colour) {
      */
     const src = str => `assets/${str[0].toUpperCase() + str.slice(1)}SpriteSheet.png`;
     const imgChar = document.createElement("img");
-    imgChar.classList.add("baby_sprite", "pixelart", "offset-silver");
+    imgChar.classList.add("silver_man", "pixelart", "offset-silver");
     imgChar.src = src(colour);
     imgChar.alt = "Character";
     imgDiv.appendChild(imgShadow);
     imgDiv.appendChild(imgChar);
     return imgDiv;
 }
-export function getAllBabyFunc() {
+
+function getAllSilverFunc() {
     const colours = [
         "silver",
         "gold",
@@ -34,12 +36,34 @@ export function getAllBabyFunc() {
         "red",
         "beige",
     ];
-    return colours.map(x => () => createBabySprite(x));
+    // @ts-ignore
+    return colours.map(x => () => createSilverSprite(x));
 }
+
+function createBabySprite() {
+    const imgDiv = document.createElement("div");
+    imgDiv.classList.add("baby", "offset-baby");
+    const imgShadow = document.createElement("img");
+    imgShadow.classList.add("silver_shadow", "pixelart", "offset-baby");
+    imgShadow.src = "assets/SilverShadow.png";
+    imgShadow.alt = "Shadow";
+
+    const imgChar = document.createElement("img");
+    imgChar.classList.add("baby_sprite", "pixelart", "offset-baby");
+    imgChar.src = "assets/baby.png";
+    imgChar.alt = "Character";
+    imgDiv.appendChild(imgShadow);
+    imgDiv.appendChild(imgChar);
+    return imgDiv;
+}
+
+
 export function createImgGetter() {
     const dict = {};
     const imgPicker = (function* () {
-        const imgs = getAllBabyFunc();
+        const imgs = getAllSilverFunc();
+        // imgs.length -= 2;
+        // imgs.push(createBabySprite);
         imgs.sort(sorting.random);
         while (true) {
             for (const imgFunc of imgs) {
@@ -58,6 +82,3 @@ export function createImgGetter() {
     };
     return imgGetter;
 }
-//TODO: add functions to create imgs for other sprites here...
-
-

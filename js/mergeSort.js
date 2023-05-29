@@ -1,5 +1,6 @@
 // @ts-check
 import * as images from "./images.js";
+import { chunkBySize, sorting } from "./util.js";
 
 const imgGetter = images.createImgGetter();
 /**
@@ -92,6 +93,83 @@ function createVisualSortTree(mainEl, arrayOfSteps) {
     }
 }
 
+/**
+ * @param {number[][]} numbers
+ */
+function* mergeSortStepGenerator(numbers) {
+    if (!numbers || numbers.length <= 0 || numbers[0].length <= 0) {
+        return [];
+    }
+
+    /** @type {number[][][]} */
+    const tracker = [];
+
+    // deep clone to avoid external mutation and ensure unique values
+    let temp = deepClone(numbers).map(x => Array.from(new Set(x)));
+
+    // return steps that break up the elements into groups/chunks
+    yield deepClone(temp);
+    tracker.push(temp);
+
+    let innerMaxLength = maxBy(temp, x => x.length);
+    while (innerMaxLength !== 1) {
+        //should only hit this once (this should always create the 3rd last step)
+        if (temp.filter(x => x.length === 3).length > temp.filter(x => x.length !== 3).length) {
+            const twoChunked = temp.flatMap(x => chunk(2, x));
+            innerMaxLength = maxBy(twoChunked, x => x.length);
+            yield deepClone(twoChunked);
+            temp = twoChunked;
+            tracker.push(deepClone(twoChunked));
+            continue;
+        }
+
+        const chunked = temp.flatMap(x => chunk(Math.max(x.length / 2, 1), x));
+        innerMaxLength = maxBy(chunked, x => x.length);
+        yield deepClone(chunked);
+        temp = chunked;
+        tracker.push(deepClone(chunked));
+    }
+
+    // take broken up groups and merge + sort them into bigger groups until original length
+    /// input --> [[6], [5], [12], [10], [9], [1]]
+    /// 1. --> [[6], [5, 12], [10], [1, 9]]
+    /// 2. --> [[5, 6, 12], [1, 9, 10]]
+    /// 3. --> [[1, 5, 6, 9, 10, 12]]
+    temp = [];
+    tracker.pop();
+    tracker.reverse();
+    for (const t of tracker) {
+        t.forEach(x => x.sort(sorting.ascending));
+        yield t;
+    }
+
+    /**
+     * @template T
+     * @param {T} array
+     * @returns {T}
+     */
+    function deepClone(array) {
+        return JSON.parse(JSON.stringify(array));
+    }
+    /**
+     * @template T
+     * @param {T[]} array
+     * @param {(value: T) => number} selector
+     * @returns {number}
+     */
+    function maxBy(array, selector) {
+        return array.map(selector).sort(sorting.descending)[0];
+    }
+    /**
+     * @template T
+     * @param {number} size
+     * @param {T[]} array
+     */
+    function chunk(size, array) {
+        return [...chunkBySize(size, array)];
+    }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
     const title = "Merge Sort";
     document.title = `Sorting Visualizer - ${title}`;
@@ -103,15 +181,19 @@ document.addEventListener("DOMContentLoaded", () => {
     const mainEl = document.querySelector("#sorting-visual");
     if (!mainEl) throw new Error("failed to find #sorting-visual html element");
 
-    createVisualSortTree(mainEl, [
-        [[6, 5, 12, 10, 9, 1]],
-        [[6, 5, 12], [10, 9, 1]],
-        [[6], [5, 12], [10], [9, 1]],
-        [[6], [5], [12], [10], [9], [1]],
-        [[6], [5, 12], [10], [1, 9]],
-        [[5, 6, 12], [1, 9, 10]],
-        [[1, 5, 6, 9, 10, 12]],
-    ]);
+    // createVisualSortTree(mainEl, [
+    //     [[6, 5, 12, 10, 9, 1]],
+    //     [[6, 5, 12], [10, 9, 1]],
+    //     [[6], [5, 12], [10], [9, 1]],
+    //     [[6], [5], [12], [10], [9], [1]],
+    //     [[6], [5, 12], [10], [1, 9]],
+    //     [[5, 6, 12], [1, 9, 10]],
+    //     [[1, 5, 6, 9, 10, 12]],
+    // ]);
+
+    const input = [[94, 12, 5, 34, 9, 21, 1]];
+    const steps = [...mergeSortStepGenerator(input)];
+    createVisualSortTree(mainEl, steps);
 
     const sourceImpl = `function merge(left, right) {
     let arr = [];
