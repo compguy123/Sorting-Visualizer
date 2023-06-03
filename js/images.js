@@ -57,13 +57,52 @@ function createBabySprite() {
     return imgDiv;
 }
 
+function createBoySprite() {
+    const imgDiv = document.createElement("div");
+    imgDiv.classList.add("boy", "offset-boy");
+    const imgShadow = document.createElement("img");
+    imgShadow.classList.add("silver_shadow", "pixelart", "offset-boy");
+    imgShadow.src = "assets/SilverShadow.png";
+    imgShadow.alt = "Shadow";
+
+    const imgChar = document.createElement("img");
+    imgChar.classList.add("boy_sprite", "pixelart", "offset-boy");
+    imgChar.src = "assets/boy.png";
+    imgChar.alt = "Character";
+    imgDiv.appendChild(imgShadow);
+    imgDiv.appendChild(imgChar);
+    return imgDiv;
+}
+
+function createKidSprite() {
+    const imgDiv = document.createElement("div");
+    imgDiv.classList.add("kid", "offset-kid");
+    const imgShadow = document.createElement("img");
+    imgShadow.classList.add("silver_shadow", "pixelart", "offset-kid");
+    imgShadow.src = "assets/SilverShadow.png";
+    imgShadow.alt = "Shadow";
+
+    const imgChar = document.createElement("img");
+    imgChar.classList.add("kid_sprite", "pixelart", "offset-kid");
+    imgChar.src = "assets/kid.png";
+    imgChar.alt = "Character";
+    imgDiv.appendChild(imgShadow);
+    imgDiv.appendChild(imgChar);
+    return imgDiv;
+}
+
 
 export function createImgGetter() {
     const dict = {};
     const imgPicker = (function* () {
-        const imgs = getAllSilverFunc();
-        // imgs.length -= 2;
-        // imgs.push(createBabySprite);
+        const silvers = getAllSilverFunc();
+        silvers.sort(sorting.random);
+        silvers.splice(0, silvers.length / 2);
+
+        const imgs = [...silvers];
+        imgs.push(createBabySprite);
+        imgs.push(createBoySprite);
+        imgs.push(createKidSprite);
         imgs.sort(sorting.random);
         while (true) {
             for (const imgFunc of imgs) {
