@@ -28,6 +28,9 @@ function createStepItem(number, id = null) {
     return div;
 }
 
+
+
+
 /**
  * Creates a group of a step
  * @param {number[]} numbers
@@ -181,17 +184,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const mainEl = document.querySelector("#sorting-visual");
     if (!mainEl) throw new Error("failed to find #sorting-visual html element");
 
-    // createVisualSortTree(mainEl, [
-    //     [[6, 5, 12, 10, 9, 1]],
-    //     [[6, 5, 12], [10, 9, 1]],
-    //     [[6], [5, 12], [10], [9, 1]],
-    //     [[6], [5], [12], [10], [9], [1]],
-    //     [[6], [5, 12], [10], [1, 9]],
-    //     [[5, 6, 12], [1, 9, 10]],
-    //     [[1, 5, 6, 9, 10, 12]],
-    // ]);
-
-    const input = [[94, 12, 5, 34, 9, 21, 1]];
+    
+    const input = [[94, 12, 5, 34, 9]];
     const steps = [...mergeSortStepGenerator(input)];
     createVisualSortTree(mainEl, steps);
 
@@ -225,4 +219,42 @@ function mergeSort(array) {
     if (!implementationEl) throw new Error("failed to find #implementation html element");
 
     implementationEl.textContent = sourceImpl;
+
+
+/********Highlighting mergesort code when the button is clicked********* */
+let lineCounter=0;
+const linesArr = [0,1,2,3,5,6,7,9,10,11,12,13,14,15];
+var highlightButton = document.getElementById("highlightButton");
+
+if (highlightButton) {
+    highlightButton.addEventListener("click", highlightLine);
+}
+
+function highlightLine() {
+    var mergeCode = document.getElementById("mergeSortSnippet");
+    if(mergeCode== null){
+        console.log("Element with ID 'mergeSortSnippet' not found.");
+        return;
+    }
+
+    var lines = mergeCode.innerHTML.split("\n");
+
+    for(var i =0;i<lines.length;i++){
+        lines[i]=lines[i].replace('<span class="highlighted">','');
+        lines[i]=lines[i].replace('</span>','');
+    }
+
+    lines[linesArr[lineCounter]]='<span class ="highlighted">' + lines[linesArr[lineCounter]] +'</span>';
+    lineCounter++;
+    if(lineCounter==linesArr.length)
+        reset();
+    mergeCode.innerHTML= lines.join("\n");
+}
+
+function reset(){
+    lineCounter=0;
+}
+/**************** */
+
 });
+
