@@ -3,6 +3,7 @@
   --pixel-size-baby:2;
   --pixel-size-boy:2;
   --pixel-size-kid:2;
+  --pixel-size-man:2;
 }
 
 * {
@@ -44,6 +45,18 @@
   width: calc(128px * var(--pixel-size-baby));
   position: absolute;
 
+}
+
+.man{
+  width: calc(32px * var(--pixel-size-baby));
+  height: calc(32px * var(--pixel-size-baby));
+  overflow: hidden;
+  position: relative;
+}
+.man_sprite{
+  animation: moveSilver 1s steps(4) infinite;
+  width: calc(128px * var(--pixel-size-baby));
+  position: absolute;
 }
 
 
@@ -104,6 +117,18 @@
 }
 
 
+.face-up-man {
+  top: calc(-32px * var(--pixel-size-man));
+}
+
+.face-left-man {
+  top: calc(-64px * var(--pixel-size-man));
+}
+
+.face-right-man {
+  top: calc(-96px * var(--pixel-size-man));
+}
+
 
 .face-right-silver {
   top: calc(-32px * var(--pixel-size-silver));
@@ -154,6 +179,15 @@
   top: calc(-64px * var(--pixel-size-kid));
 }
 
+.page{
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  gap:1rem;
+
+}
+
+
 @keyframes moveSilver {
   from {
     transform: translate3d(0px, 0, 0);
@@ -163,3 +197,14 @@
     transform: translate3d(-100%, 0, 0);
   }
 }
+
+.arrowButton{
+ padding: 1.5rem;
+ 
+}
+
+.highlighted {
+  background-color: yellow;
+  color: black;
+}
+

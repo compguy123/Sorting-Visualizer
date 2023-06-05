@@ -61,4 +61,5 @@ div.offset-baby {
 #implementation-section {
     display: flex;
     justify-content: center;
+    align-items: center;
 }
