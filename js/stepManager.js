@@ -75,23 +75,39 @@ export class StepManager {
     hideAndCreateStepper() {
         const skipStepAmount = 1;
         const hiddenSteps = this.steps.slice(skipStepAmount);
-        for (const step of hiddenSteps) {
-            step.hide();
-        }
+        hideSteps(hiddenSteps);
         let stepCounter = 0;
         return () => {
             if (stepCounter >= hiddenSteps.length) {
                 stepCounter = 0;
-                for (const step of hiddenSteps) {
-                    step.hide();
-                }
+                hideSteps(hiddenSteps);
                 return;
             }
-            for (const step of hiddenSteps.slice(0, stepCounter + skipStepAmount)) {
-                step.show();
+            const stepsToShow = hiddenSteps.slice(0, stepCounter + skipStepAmount);
+            for (const step of stepsToShow) {
+                step.domElement.style.transition = "all 500ms ease";
+
+                // step.show(); // to show the whole step
+                step.allStepGroupItems.flat().forEach(x => x.domElement.style.opacity = "100%");
+                step.domElement.style.backgroundColor = "unset";
+                step.domElement.style.borderRadius = "unset";
+                //TODO: probably some animation logic goes here
+                // - maybe we find the item in the next step (that's currently hidden)
+                //   and then set a class or keep track of where it will be placed in the dom.
+                //   With that you could translate the item to the next spot before calling step.show();
             }
             stepCounter++;
         };
+
+        /** @param {Step[]} steps */
+        function hideSteps(steps) {
+            for (const step of steps) {
+                // step.hide(); // to hide the whole step
+                step.allStepGroupItems.flat().forEach(x => x.domElement.style.opacity = "0%");
+                step.domElement.style.backgroundColor = "rgb(10, 158, 226)";
+                step.domElement.style.borderRadius = "0.5rem";
+            }
+        }
     }
 }
 
@@ -129,6 +145,14 @@ export class Step {
     /** @type {StepGroup[]} */
     get stepGroups() {
         return this.#stepGroups;
+    }
+
+    get allStepGroupItems() {
+        return this.#stepGroups.map(group => group.stepGroupItems);
+    }
+
+    get originalNumbers() {
+        return this.#stepGroups.map(group => group.stepGroupItems.map(item => item.value));
     }
 
     get domElement() {
@@ -199,6 +223,10 @@ export class StepGroup {
     /** @type {StepGroupItem[]} */
     get stepGroupItems() {
         return this.#stepGroupItems;
+    }
+
+    get originalNumbers() {
+        return this.#stepGroupItems.map(item => item.value);
     }
 
     get domElement() {
