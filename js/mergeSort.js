@@ -65,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mainEl) throw new Error("failed to find #sorting-visual html element");
 
 
+
     /*
     example steps:
     [
@@ -83,7 +84,28 @@ document.addEventListener("DOMContentLoaded", () => {
     const input = [[94, 12, 5, 34, 9]];
     const steps = [...mergeSortStepGenerator(input)];
     const stepManager = new StepManager("main", steps);
+
+    const skipStepAmount = 1;
+    for (const item of stepManager.allStepGroupItems.slice(skipStepAmount).flat(2)) {
+        item.hide();
+    }
     mainEl.replaceWith(stepManager.domElement);
+
+    let stepCounter = 0;
+    const nextStepButton = document.querySelector("#nextStepButton");
+    if (!nextStepButton) throw new Error("failed to find #nextStepButton html element");
+    nextStepButton.addEventListener("click", () => {
+        stepCounter++;
+        if (stepCounter > stepManager.allStepGroupItems.slice(skipStepAmount).length) {
+            stepCounter = 0;
+            for (const item of stepManager.allStepGroupItems.slice(skipStepAmount).flat(2)) {
+                item.hide();
+            }
+        }
+        for (const item of stepManager.allStepGroupItems.slice(skipStepAmount, stepCounter + skipStepAmount).flat(2)) {
+            item.show();
+        }
+    });
 
 
 

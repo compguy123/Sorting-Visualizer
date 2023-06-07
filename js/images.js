@@ -44,13 +44,7 @@ export function createImgGetter() {
     const dict = {};
     const imgPicker = (function* () {
         const silvers = getAllSilverFunc();
-        // silvers.sort(sorting.random);
-        // silvers.splice(0, silvers.length / 2);
-
         const imgs = [...silvers];
-        // imgs.push(createBabySprite);
-        // imgs.push(createBoySprite);
-        // imgs.push(createKidSprite);
         imgs.sort(sorting.random);
         while (true) {
             for (const imgFunc of imgs) {

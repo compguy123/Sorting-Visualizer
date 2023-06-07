@@ -2,13 +2,14 @@
 import * as images from "./images.js";
 
 export class StepManager {
+    #type = "STEP_MANAGER";
     /** @type {keyof HTMLElementTagNameMap} */
     #elementType;
 
     /** @type {Step[]} */
     #steps = [];
 
-    /** @type {Element} */
+    /** @type {HTMLElement} */
     #domElement;
 
     /**
@@ -21,8 +22,24 @@ export class StepManager {
         this.#domElement = this.#createDomElement();
     }
 
+    get type() {
+        return this.#type;
+    }
+
     get steps() {
         return this.#steps;
+    }
+
+    get allStepGroups() {
+        return this.#steps.map(step => step.stepGroups);
+    }
+
+    get allStepGroupItems() {
+        return this.#steps.map(step => step.stepGroups.map(group => group.stepGroupItems));
+    }
+
+    get originalNumbers() {
+        return this.#steps.map(step => step.stepGroups.map(group => group.stepGroupItems.map(item => item.value)));
     }
 
     get domElement() {
@@ -49,12 +66,13 @@ export class StepManager {
 }
 
 export class Step {
+    #type = "STEP";
     #index = -1;
 
     /** @type {StepGroup[]} */
-    #groups = [];
+    #stepGroups = [];
 
-    /** @type {Element} */
+    /** @type {HTMLElement} */
     #domElement;
 
     /**
@@ -63,17 +81,24 @@ export class Step {
      */
     constructor(index, groups) {
         this.#index = index;
-        this.#groups = this.#createChildren(groups);
-        //@ts-ignore
-        this.#domElement = this.#createDomElement();
+        this.#stepGroups = this.#createChildren(groups);
+
+        const domElement = this.#createDomElement();
+        if (!domElement) throw new Error(`Failed to create dom element for Step-${index}`);
+        this.#domElement = domElement;
     }
+
+    get type() {
+        return this.#type;
+    }
+
     get index() {
         return this.#index;
     }
 
     /** @type {StepGroup[]} */
-    get groups() {
-        return this.#groups;
+    get stepGroups() {
+        return this.#stepGroups;
     }
 
     get domElement() {
@@ -93,7 +118,7 @@ export class Step {
             step.dataset.index = this.#index.toString();
         }
 
-        const groups = this.#groups;
+        const groups = this.#stepGroups;
         for (const group of groups) {
             const groupDiv = group.domElement;
             if (groupDiv.children?.length === 0) {
@@ -106,12 +131,13 @@ export class Step {
 }
 
 export class StepGroup {
+    #type = "STEP_GROUP";
     #index = -1;
 
     /** @type {StepGroupItem[]} */
-    #items = [];
+    #stepGroupItems = [];
 
-    /** @type {Element} */
+    /** @type {HTMLElement} */
     #domElement;
 
     /**
@@ -120,16 +146,21 @@ export class StepGroup {
      */
     constructor(index, numbers) {
         this.#index = index;
-        this.#items = this.#createChildren(numbers);
+        this.#stepGroupItems = this.#createChildren(numbers);
         this.#domElement = this.#createDomElement();
     }
+
+    get type() {
+        return this.#type;
+    }
+
     get index() {
         return this.#index;
     }
 
     /** @type {StepGroupItem[]} */
-    get items() {
-        return this.#items;
+    get stepGroupItems() {
+        return this.#stepGroupItems;
     }
 
     get domElement() {
@@ -148,7 +179,7 @@ export class StepGroup {
             div.classList.add(`group-${this.#index}`);
             div.dataset.index = this.#index.toString();
         }
-        const children = this.#items;
+        const children = this.#stepGroupItems;
         for (const child of children) {
             div.appendChild(child.domElement);
         }
@@ -157,12 +188,13 @@ export class StepGroup {
 }
 
 export class StepGroupItem {
+    #type = "STEP_GROUP_ITEM";
     static #imgGetter = images.createImgGetter();
 
     #index = -1;
     #value = 0;
 
-    /** @type {Element} */
+    /** @type {HTMLElement} */
     #domElement;
 
     /**
@@ -173,6 +205,10 @@ export class StepGroupItem {
         this.#index = index;
         this.#value = value;
         this.#domElement = this.#createDomElement();
+    }
+
+    get type() {
+        return this.#type;
     }
 
     get index() {
@@ -205,5 +241,13 @@ export class StepGroupItem {
         div.appendChild(span);
 
         return div;
+    }
+
+    hide() {
+        this.#domElement.style.display = "none";
+    }
+
+    show() {
+        this.#domElement.style.display = "flex";
     }
 }
