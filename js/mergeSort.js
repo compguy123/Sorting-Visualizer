@@ -184,77 +184,43 @@ document.addEventListener("DOMContentLoaded", () => {
     const mainEl = document.querySelector("#sorting-visual");
     if (!mainEl) throw new Error("failed to find #sorting-visual html element");
 
-    
+
     const input = [[94, 12, 5, 34, 9]];
     const steps = [...mergeSortStepGenerator(input)];
     createVisualSortTree(mainEl, steps);
 
-    const sourceImpl = `function merge(left, right) {
-    let arr = [];
-    // Break out of loop if any one of the array gets empty
-    while (left.length && right.length) {
-        // Pick the smaller among the smallest element of left and right sub arrays
-        if (left[0] < right[0]) {
-            arr.push(left.shift());
-        } else {
-            arr.push(right.shift());
+
+    /********Highlighting mergesort code when the button is clicked********* */
+    let lineCounter = 0;
+    const linesArr = [0, 1, 2, 3, 5, 6, 7, 9, 10, 11, 12, 13, 14, 15];
+    const highlightButton = document.getElementById("highlightButton");
+    if (highlightButton) {
+        highlightButton.addEventListener("click", highlightLine);
+    }
+
+    function highlightLine() {
+        const mergeCode = document.getElementById("mergeSortSnippet");
+        if (mergeCode == null) {
+            console.log("Element with ID 'mergeSortSnippet' not found.");
+            return;
         }
-    }
-    // Concatenating the leftover elements
-    // (in case we didn't go through the entire left or right array)
-    return [...arr, ...left, ...right];
-}
 
-function mergeSort(array) {
-    const half = array.length / 2;
-    // Base case or terminating case
-    if (array.length < 2) {
-        return array;
-    }
-    const left = array.splice(0, half);
-    return merge(mergeSort(left), mergeSort(array));
-}`;
+        const lines = mergeCode.innerHTML.split("\n");
 
-    const implementationEl = document.querySelector("#implementation");
-    if (!implementationEl) throw new Error("failed to find #implementation html element");
+        for (let i = 0; i < lines.length; i++) {
+            lines[i] = lines[i].replace('<span class="highlighted">', '');
+            lines[i] = lines[i].replace('</span>', '');
+        }
 
-    implementationEl.textContent = sourceImpl;
-
-
-/********Highlighting mergesort code when the button is clicked********* */
-let lineCounter=0;
-const linesArr = [0,1,2,3,5,6,7,9,10,11,12,13,14,15];
-var highlightButton = document.getElementById("highlightButton");
-
-if (highlightButton) {
-    highlightButton.addEventListener("click", highlightLine);
-}
-
-function highlightLine() {
-    var mergeCode = document.getElementById("mergeSortSnippet");
-    if(mergeCode== null){
-        console.log("Element with ID 'mergeSortSnippet' not found.");
-        return;
+        lines[linesArr[lineCounter]] = `<span class="highlighted">${lines[linesArr[lineCounter]]}</span>`;
+        lineCounter++;
+        if (lineCounter == linesArr.length)
+            reset();
+        mergeCode.innerHTML = lines.join("\n");
     }
 
-    var lines = mergeCode.innerHTML.split("\n");
-
-    for(var i =0;i<lines.length;i++){
-        lines[i]=lines[i].replace('<span class="highlighted">','');
-        lines[i]=lines[i].replace('</span>','');
+    function reset() {
+        lineCounter = 0;
     }
-
-    lines[linesArr[lineCounter]]='<span class ="highlighted">' + lines[linesArr[lineCounter]] +'</span>';
-    lineCounter++;
-    if(lineCounter==linesArr.length)
-        reset();
-    mergeCode.innerHTML= lines.join("\n");
-}
-
-function reset(){
-    lineCounter=0;
-}
-/**************** */
-
+    /**************** */
 });
-

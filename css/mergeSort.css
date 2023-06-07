@@ -45,45 +45,6 @@ img.offset-silver {
     pointer-events: none;
 }
 
-img.offset-baby {
-    left: -2px;
-    top: -2px;
-    user-select: none;
-    pointer-events: none;
-}
-
-div.offset-baby {
-    top: 0px;
-    width: 60px;
-    height: 60px;
-}
-
-img.offset-boy {
-    left: -2px;
-    top: -2px;
-    user-select: none;
-    pointer-events: none;
-}
-
-div.offset-boy {
-    top: 0px;
-    width: 60px;
-    height: 60px;
-}
-
-img.offset-kid {
-    left: -2px;
-    top: -2px;
-    user-select: none;
-    pointer-events: none;
-}
-
-div.offset-kid {
-    top: 0px;
-    width: 60px;
-    height: 60px;
-}
-
 #implementation-section {
     display: flex;
     justify-content: center;
