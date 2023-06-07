@@ -74,46 +74,63 @@ export class StepManager {
 
     hideAndCreateStepper() {
         const skipStepAmount = 1;
-        const hiddenSteps = this.steps.slice(skipStepAmount);
+        const allSteps = this.steps;
+        const hiddenSteps = allSteps.slice(skipStepAmount);
+        let allPositionOffsets = allSteps.map(x => x.allStepGroupItems.map(z => z.map(y => y.domElement.getBoundingClientRect())));
         hideSteps(hiddenSteps);
         let stepCounter = 0;
+        let firstRun = true;
         return () => {
+            if (firstRun) {
+                allPositionOffsets = allSteps.map(x => x.allStepGroupItems.map(z => z.map(y => y.domElement.getBoundingClientRect())));
+                console.log("allPositionOffsets", allPositionOffsets);
+                firstRun = false;
+            }
             if (stepCounter >= hiddenSteps.length) {
                 stepCounter = 0;
-                hideSteps(hiddenSteps);
+                hideSteps(allSteps);
                 return;
             }
 
-            const stepToShow = hiddenSteps[stepCounter];
-            const upComingStep = stepCounter + 1 < hiddenSteps.length
-                ? hiddenSteps[stepCounter + 1]
-                : null;
-            // console.log(stepToShow);
-            // console.log(upComingStep);
-            const me = stepToShow.allStepGroupItems.flat(2).find(x => x.value === 94);
+            const currentStep = allSteps[stepCounter];
+            const nextStep = hiddenSteps[stepCounter];
 
-            const futureMe = upComingStep?.allStepGroupItems.flat(2).find(x => x.value === 94);
-            if (futureMe && me) {
-                const currentOffset = me.domElement.getBoundingClientRect();
-                const futureOffset = futureMe.domElement.getBoundingClientRect();
+            for (const group of currentStep.stepGroups) {
+                if (!nextStep) {
+                    break;
+                }
+                for (const item of group.stepGroupItems) {
+                    const current = group.stepGroupItems[item.index];
+                    const futureGroup = nextStep.stepGroups.find(x => x.originalNumbers.includes(current.value));
+                    const future = futureGroup?.stepGroupItems.find(x => x.value === current.value);
 
-                // me.domElement.style.position = "relative";
-                // me.domElement.style.top = `${futureOffset.y - currentOffset.y}px`;
-                // me.domElement.style.left = `${futureOffset.x - currentOffset.x}px`;
+                    if (current && futureGroup && future) {
+                        const currentOffset = allPositionOffsets[currentStep.index][group.index][item.index];
+                        const futureOffset = allPositionOffsets[nextStep.index][futureGroup.index][future.index];
 
-                const relX = futureOffset.x - currentOffset.x;
-                const relY = futureOffset.y - currentOffset.y;
-                me.domElement.style.zIndex = "999";
-                me.domElement.style.transform = `translate(${relX}px, ${relY}px)`;
+                        const relX = futureOffset.x - currentOffset.x;
+                        const relY = futureOffset.y - currentOffset.y;
+                        current.domElement.style.zIndex = "999";
+                        current.domElement.style.transform = `translate(${relX}px, ${relY}px)`;
+                    }
+
+                }
             }
 
 
-            stepToShow.domElement.style.transition = "all 500ms ease";
+            nextStep.domElement.style.transition = "all 500ms ease";
 
             // stepToShow.show(); // to show the whole step
-            stepToShow.allStepGroupItems.flat().forEach(x => x.domElement.style.opacity = "100%");
-            stepToShow.domElement.style.backgroundColor = "unset";
-            stepToShow.domElement.style.borderRadius = "unset";
+            currentStep.allStepGroupItems.flat().forEach(x => {
+                x.domElement.style.transition = "all 1s ease";
+                x.domElement.style.opacity = "60%";
+            });
+            nextStep.allStepGroupItems.flat().forEach(x => {
+                x.domElement.style.transition = "all 2s ease";
+                x.domElement.style.opacity = "100%";
+            });
+            nextStep.domElement.style.backgroundColor = "unset";
+            nextStep.domElement.style.borderRadius = "unset";
             //TODO: probably some animation logic goes here
             // - maybe we find the item in the next step (that's currently hidden)
             //   and then set a class or keep track of where it will be placed in the dom.
@@ -125,9 +142,13 @@ export class StepManager {
         function hideSteps(steps) {
             for (const step of steps) {
                 // step.hide(); // to hide the whole step
-                step.allStepGroupItems.flat().forEach(x => x.domElement.style.opacity = "0%");
                 step.domElement.style.backgroundColor = "rgb(10, 158, 226)";
                 step.domElement.style.borderRadius = "0.5rem";
+
+                step.allStepGroupItems.flat().forEach(x => {
+                    x.domElement.style.opacity = "0%";
+                    x.domElement.style.transform = "";
+                });
             }
         }
     }
