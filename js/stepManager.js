@@ -76,6 +76,7 @@ export class StepManager {
         const skipStepAmount = 1;
         const allSteps = this.steps;
         const hiddenSteps = allSteps.slice(skipStepAmount);
+        /** @type {DOMRect[][][]} */
         let allPositionOffsets = [];
         hideSteps(hiddenSteps);
         let stepCounter = 0;
