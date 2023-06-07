@@ -83,19 +83,38 @@ export class StepManager {
                 hideSteps(hiddenSteps);
                 return;
             }
-            const stepsToShow = hiddenSteps.slice(0, stepCounter + skipStepAmount);
-            for (const step of stepsToShow) {
-                step.domElement.style.transition = "all 500ms ease";
 
-                // step.show(); // to show the whole step
-                step.allStepGroupItems.flat().forEach(x => x.domElement.style.opacity = "100%");
-                step.domElement.style.backgroundColor = "unset";
-                step.domElement.style.borderRadius = "unset";
-                //TODO: probably some animation logic goes here
-                // - maybe we find the item in the next step (that's currently hidden)
-                //   and then set a class or keep track of where it will be placed in the dom.
-                //   With that you could translate the item to the next spot before calling step.show();
+            const stepToShow = hiddenSteps[stepCounter];
+            const upComingStep = stepCounter + 1 < hiddenSteps.length
+                ? hiddenSteps[stepCounter + 1]
+                : null;
+            // console.log(stepToShow);
+            // console.log(upComingStep);
+            const me = stepToShow.allStepGroupItems.flat(2).find(x => x.value === 94);
+
+            const futureMe = upComingStep?.allStepGroupItems.flat(2).find(x => x.value === 94);
+            if (futureMe && me) {
+                const currentOffset = me.domElement.getBoundingClientRect();
+                const futureOffset = futureMe.domElement.getBoundingClientRect();
+                console.log(futureOffset);
+
+                me.domElement.style.position = "relative";
+                me.domElement.style.top = `${futureOffset.y - currentOffset.y}px`;
+                me.domElement.style.left = `${futureOffset.x - currentOffset.x}px`;
+                me.domElement.style.zIndex = "999";
             }
+
+
+            stepToShow.domElement.style.transition = "all 500ms ease";
+
+            // stepToShow.show(); // to show the whole step
+            stepToShow.allStepGroupItems.flat().forEach(x => x.domElement.style.opacity = "100%");
+            stepToShow.domElement.style.backgroundColor = "unset";
+            stepToShow.domElement.style.borderRadius = "unset";
+            //TODO: probably some animation logic goes here
+            // - maybe we find the item in the next step (that's currently hidden)
+            //   and then set a class or keep track of where it will be placed in the dom.
+            //   With that you could translate the item to the next spot before calling step.show();
             stepCounter++;
         };
 
