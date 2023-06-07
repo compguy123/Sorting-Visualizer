@@ -76,12 +76,13 @@ export class StepManager {
         const skipStepAmount = 1;
         const allSteps = this.steps;
         const hiddenSteps = allSteps.slice(skipStepAmount);
-        let allPositionOffsets = allSteps.map(x => x.allStepGroupItems.map(z => z.map(y => y.domElement.getBoundingClientRect())));
+        let allPositionOffsets = [];
         hideSteps(hiddenSteps);
         let stepCounter = 0;
         let firstRun = true;
         return () => {
             if (firstRun) {
+                // needed to call this here in order to get positions after elements are visible/rendered - otherwise this "getBoundingClientRect()" func will return a dummy object
                 allPositionOffsets = allSteps.map(x => x.allStepGroupItems.map(z => z.map(y => y.domElement.getBoundingClientRect())));
                 console.log("allPositionOffsets", allPositionOffsets);
                 firstRun = false;
@@ -99,13 +100,12 @@ export class StepManager {
                 if (!nextStep) {
                     break;
                 }
-                for (const item of group.stepGroupItems) {
-                    const current = group.stepGroupItems[item.index];
+                for (const current of group.stepGroupItems) {
                     const futureGroup = nextStep.stepGroups.find(x => x.originalNumbers.includes(current.value));
                     const future = futureGroup?.stepGroupItems.find(x => x.value === current.value);
 
-                    if (current && futureGroup && future) {
-                        const currentOffset = allPositionOffsets[currentStep.index][group.index][item.index];
+                    if (futureGroup && future) {
+                        const currentOffset = allPositionOffsets[currentStep.index][group.index][current.index];
                         const futureOffset = allPositionOffsets[nextStep.index][futureGroup.index][future.index];
 
                         const relX = futureOffset.x - currentOffset.x;
@@ -113,28 +113,33 @@ export class StepManager {
                         current.domElement.style.zIndex = "999";
                         current.domElement.style.transform = `translate(${relX}px, ${relY}px)`;
                     }
-
                 }
             }
 
-
-            nextStep.domElement.style.transition = "all 500ms ease";
-
-            // stepToShow.show(); // to show the whole step
             currentStep.allStepGroupItems.flat().forEach(x => {
-                x.domElement.style.transition = "all 1s ease";
-                x.domElement.style.opacity = "60%";
+                const delayMs = 1000;
+                x.domElement.style.transition = `opacity ${delayMs}ms ease, transform ${delayMs}ms ease`;
+                x.domElement.style.border = "1px solid transparent";
+
+                setTimeout(() => {
+                    x.domElement.style.opacity = "60%";
+                }, delayMs / 2);
+                setTimeout(() => {
+                    x.domElement.style.border = "1px solid white";
+                }, delayMs);
             });
             nextStep.allStepGroupItems.flat().forEach(x => {
-                x.domElement.style.transition = "all 2s ease";
-                x.domElement.style.opacity = "100%";
+                const delayMs = 1000;
+                x.domElement.style.transition = `border ${delayMs}ms, opacity ${delayMs}ms ease, transform ${delayMs}ms ease`;
+                setTimeout(() => {
+                    x.domElement.style.border = "1px solid white";
+                    x.domElement.style.opacity = "100%";
+                }, delayMs / 2);
             });
+
+            nextStep.domElement.style.transition = "all 1s ease";
             nextStep.domElement.style.backgroundColor = "unset";
             nextStep.domElement.style.borderRadius = "unset";
-            //TODO: probably some animation logic goes here
-            // - maybe we find the item in the next step (that's currently hidden)
-            //   and then set a class or keep track of where it will be placed in the dom.
-            //   With that you could translate the item to the next spot before calling step.show();
             stepCounter++;
         };
 
@@ -148,6 +153,7 @@ export class StepManager {
                 step.allStepGroupItems.flat().forEach(x => {
                     x.domElement.style.opacity = "0%";
                     x.domElement.style.transform = "";
+                    x.domElement.style.transition = "";
                 });
             }
         }
