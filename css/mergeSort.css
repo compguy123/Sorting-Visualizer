@@ -1,4 +1,4 @@
-#sorting-visual {
+.sorting-visual {
     display: flex;
     flex-flow: column;
     gap: 1rem;
@@ -49,4 +49,10 @@ img.offset-silver {
     display: flex;
     justify-content: center;
     align-items: center;
+}
+
+.button-column {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: 1rem;
 }

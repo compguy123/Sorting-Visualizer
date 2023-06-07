@@ -1,100 +1,6 @@
 // @ts-check
-import * as images from "./images.js";
-import { chunkBySize, sorting } from "./util.js";
-
-const imgGetter = images.createImgGetter();
-/**
- * Creates an element of a group
- * @param {number} number
- * @param {number | null} id
- **/
-function createStepItem(number, id = null) {
-    const div = document.createElement("div");
-    div.classList.add("g-item");
-    if (id !== null) {
-        div.classList.add(`g-item-${id}`);
-        div.dataset.index = id.toString();
-    }
-    div.dataset.value = number.toString();
-
-    const imgFunc = imgGetter(number);
-    const imgDiv = imgFunc();
-    div.appendChild(imgDiv);
-
-    const span = document.createElement("span");
-    span.textContent = number.toString();
-    div.appendChild(span);
-
-    return div;
-}
-
-
-
-
-/**
- * Creates a group of a step
- * @param {number[]} numbers
- * @param {number | null} id
- **/
-function createStepItemGroup(numbers, id = null) {
-    const div = document.createElement("div");
-    div.classList.add("group");
-    if (id !== null) {
-        div.classList.add(`group-${id}`);
-        div.dataset.index = id.toString();
-    }
-    const children = numbers.map((x, i) => createStepItem(x, i));
-    for (const child of children) {
-        div.appendChild(child);
-    }
-    return div;
-}
-
-/**
- * @param {HTMLElement} step
- * @param {number[]} array
- * @param {number | null} id
- **/
-function addGroupToStep(step, array, id = null) {
-    const group = array;
-    const groupDiv = createStepItemGroup(group, id);
-    if (groupDiv.children?.length === 0) {
-        return;
-    }
-    step.appendChild(groupDiv);
-}
-
-/**
- * Creates a step with multiple groups
- * @param {number[][]} arrays
- * @param {number | null} id
- **/
-function createStepMultiple(arrays, id = null) {
-    const step = document.createElement("section");
-    step.classList.add("step");
-    if (id !== null) {
-        step.classList.add(`step-${id}`);
-        step.dataset.index = id.toString();
-    }
-    let groupCounter = 0;
-    for (const array of arrays) {
-        addGroupToStep(step, array, groupCounter++);
-    }
-    return step;
-}
-
-/**
- * Creates steps according to `arrayOfSteps` and then appends them to `mainEl`
- * @param {Element} mainEl
- * @param {number[][][]} arrayOfSteps 
- **/
-function createVisualSortTree(mainEl, arrayOfSteps) {
-    for (let i = 0; i < arrayOfSteps.length; i++) {
-        const stepArray = arrayOfSteps[i];
-        const stepEl = createStepMultiple(stepArray, i);
-        mainEl.appendChild(stepEl);
-    }
-}
+import { StepManager } from "./stepManager.js";
+import { linq, deepClone, sorting } from "./util.js";
 
 /**
  * @param {number[][]} numbers
@@ -114,20 +20,20 @@ function* mergeSortStepGenerator(numbers) {
     yield deepClone(temp);
     tracker.push(temp);
 
-    let innerMaxLength = maxBy(temp, x => x.length);
+    let innerMaxLength = linq.maxBy(temp, x => x.length);
     while (innerMaxLength !== 1) {
         //should only hit this once (this should always create the 3rd last step)
         if (temp.filter(x => x.length === 3).length > temp.filter(x => x.length !== 3).length) {
-            const twoChunked = temp.flatMap(x => chunk(2, x));
-            innerMaxLength = maxBy(twoChunked, x => x.length);
+            const twoChunked = temp.flatMap(x => linq.chunk(2, x));
+            innerMaxLength = linq.maxBy(twoChunked, x => x.length);
             yield deepClone(twoChunked);
             temp = twoChunked;
             tracker.push(deepClone(twoChunked));
             continue;
         }
 
-        const chunked = temp.flatMap(x => chunk(Math.max(x.length / 2, 1), x));
-        innerMaxLength = maxBy(chunked, x => x.length);
+        const chunked = temp.flatMap(x => linq.chunk(Math.max(x.length / 2, 1), x));
+        innerMaxLength = linq.maxBy(chunked, x => x.length);
         yield deepClone(chunked);
         temp = chunked;
         tracker.push(deepClone(chunked));
@@ -145,32 +51,6 @@ function* mergeSortStepGenerator(numbers) {
         t.forEach(x => x.sort(sorting.ascending));
         yield t;
     }
-
-    /**
-     * @template T
-     * @param {T} array
-     * @returns {T}
-     */
-    function deepClone(array) {
-        return JSON.parse(JSON.stringify(array));
-    }
-    /**
-     * @template T
-     * @param {T[]} array
-     * @param {(value: T) => number} selector
-     * @returns {number}
-     */
-    function maxBy(array, selector) {
-        return array.map(selector).sort(sorting.descending)[0];
-    }
-    /**
-     * @template T
-     * @param {number} size
-     * @param {T[]} array
-     */
-    function chunk(size, array) {
-        return [...chunkBySize(size, array)];
-    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -185,9 +65,26 @@ document.addEventListener("DOMContentLoaded", () => {
     if (!mainEl) throw new Error("failed to find #sorting-visual html element");
 
 
+    /*
+    example steps:
+    [
+        [ [6, 5, 12, 10, 9, 1] ],
+        [ [6, 5, 12], [10, 9, 1] ],
+        [ [6], [5, 12], [10], [9, 1] ],
+        [ [6], [5], [12], [10], [9], [1] ],
+        [ [6], [5, 12], [10], [1, 9] ],
+        [ [5, 6, 12], [1, 9, 10] ],
+        [ [1, 5, 6, 9, 10, 12] ],
+    ]
+    steps[0] ==> step1
+    steps[0][0] ==> step1's 1st group
+    steps[0][0][0] ==> step1 1st group's 1st element
+    */
     const input = [[94, 12, 5, 34, 9]];
     const steps = [...mergeSortStepGenerator(input)];
-    createVisualSortTree(mainEl, steps);
+    const stepManager = new StepManager("main", steps);
+    mainEl.replaceWith(stepManager.domElement);
+
 
 
     /********Highlighting mergesort code when the button is clicked********* */
