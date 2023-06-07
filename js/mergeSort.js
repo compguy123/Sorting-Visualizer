@@ -85,27 +85,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const steps = [...mergeSortStepGenerator(input)];
     const stepManager = new StepManager("main", steps);
 
-    const skipStepAmount = 1;
-    for (const item of stepManager.allStepGroupItems.slice(skipStepAmount).flat(2)) {
-        item.hide();
-    }
-    mainEl.replaceWith(stepManager.domElement);
-
-    let stepCounter = 0;
     const nextStepButton = document.querySelector("#nextStepButton");
     if (!nextStepButton) throw new Error("failed to find #nextStepButton html element");
-    nextStepButton.addEventListener("click", () => {
-        stepCounter++;
-        if (stepCounter > stepManager.allStepGroupItems.slice(skipStepAmount).length) {
-            stepCounter = 0;
-            for (const item of stepManager.allStepGroupItems.slice(skipStepAmount).flat(2)) {
-                item.hide();
-            }
-        }
-        for (const item of stepManager.allStepGroupItems.slice(skipStepAmount, stepCounter + skipStepAmount).flat(2)) {
-            item.show();
-        }
-    });
+    nextStepButton.addEventListener("click", stepManager.hideAndCreateStepper());
+
+    mainEl.replaceWith(stepManager.domElement);
 
 
 

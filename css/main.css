@@ -70,3 +70,7 @@
   background-color: yellow;
   color: black;
 }
+
+.hidden {
+  display: none !important;
+}

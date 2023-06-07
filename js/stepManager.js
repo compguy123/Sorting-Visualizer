@@ -63,6 +63,36 @@ export class StepManager {
         }
         return wrapper;
     }
+
+    hide() {
+        this.#domElement.classList.add("hidden");
+    }
+
+    show() {
+        this.#domElement.classList.remove("hidden");
+    }
+
+    hideAndCreateStepper() {
+        const skipStepAmount = 1;
+        const hiddenSteps = this.steps.slice(skipStepAmount);
+        for (const step of hiddenSteps) {
+            step.hide();
+        }
+        let stepCounter = 0;
+        return () => {
+            if (stepCounter >= hiddenSteps.length) {
+                stepCounter = 0;
+                for (const step of hiddenSteps) {
+                    step.hide();
+                }
+                return;
+            }
+            for (const step of hiddenSteps.slice(0, stepCounter + skipStepAmount)) {
+                step.show();
+            }
+            stepCounter++;
+        };
+    }
 }
 
 export class Step {
@@ -128,6 +158,14 @@ export class Step {
         }
         return step;
     }
+
+    hide() {
+        this.#domElement.classList.add("hidden");
+    }
+
+    show() {
+        this.#domElement.classList.remove("hidden");
+    }
 }
 
 export class StepGroup {
@@ -184,6 +222,14 @@ export class StepGroup {
             div.appendChild(child.domElement);
         }
         return div;
+    }
+
+    hide() {
+        this.#domElement.classList.add("hidden");
+    }
+
+    show() {
+        this.#domElement.classList.remove("hidden");
     }
 }
 
@@ -244,10 +290,10 @@ export class StepGroupItem {
     }
 
     hide() {
-        this.#domElement.style.display = "none";
+        this.#domElement.classList.add("hidden");
     }
 
     show() {
-        this.#domElement.style.display = "flex";
+        this.#domElement.classList.remove("hidden");
     }
 }
