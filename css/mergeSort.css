@@ -28,7 +28,7 @@
 
     padding: 0.25rem;
 
-    border: 0.1rem solid white;
+    /* border: 0.1rem solid white; */
     border-collapse: collapse;
 
     text-align: center;
@@ -36,6 +36,8 @@
     font-weight: 700;
     font-size: 1.25rem;
     color: white;
+
+    transition: all 1s ease;
 }
 
 img.offset-silver {

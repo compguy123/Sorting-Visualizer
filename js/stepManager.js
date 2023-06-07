@@ -96,12 +96,15 @@ export class StepManager {
             if (futureMe && me) {
                 const currentOffset = me.domElement.getBoundingClientRect();
                 const futureOffset = futureMe.domElement.getBoundingClientRect();
-                console.log(futureOffset);
 
-                me.domElement.style.position = "relative";
-                me.domElement.style.top = `${futureOffset.y - currentOffset.y}px`;
-                me.domElement.style.left = `${futureOffset.x - currentOffset.x}px`;
+                // me.domElement.style.position = "relative";
+                // me.domElement.style.top = `${futureOffset.y - currentOffset.y}px`;
+                // me.domElement.style.left = `${futureOffset.x - currentOffset.x}px`;
+
+                const relX = futureOffset.x - currentOffset.x;
+                const relY = futureOffset.y - currentOffset.y;
                 me.domElement.style.zIndex = "999";
+                me.domElement.style.transform = `translate(${relX}px, ${relY}px)`;
             }
 
 
