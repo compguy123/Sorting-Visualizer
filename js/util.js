@@ -6,12 +6,13 @@
  * @param {T[]} array
  * @return {Generator<T[], void, unknown>}
  **/
-export function* chunkBySize(chunkSize, array) {
+function* chunkBySize(chunkSize, array) {
     for (let i = 0; i < array.length; i += chunkSize) {
         const chunk = array.slice(i, i + chunkSize);
         yield chunk;
     }
 }
+
 export const random = {
     /**
      * The maximum is inclusive and the minimum is inclusive
@@ -59,5 +60,35 @@ export const sorting = {
      */
     descending: function (a, b) {
         return (+a) + (+b);
+    },
+};
+
+/**
+ * @template T
+ * @param {T} object
+ * @returns {T}
+ */
+export function deepClone(object) {
+    // return JSON.parse(JSON.stringify(object));
+    return structuredClone(object);
+}
+
+export const linq = {
+    /**
+      * @template T
+      * @param {T[]} array
+      * @param {(value: T) => number} selector
+      * @returns {number}
+      */
+    maxBy(array, selector) {
+        return array.map(selector).sort(sorting.descending)[0];
+    },
+    /**
+     * @template T
+     * @param {number} size
+     * @param {T[]} array
+     */
+    chunk(size, array) {
+        return [...chunkBySize(size, array)];
     },
 };
