@@ -73,12 +73,13 @@ export class StepManager {
     }
 
     hideAndCreateStepper() {
-        const skipStepAmount = 1;
+        // const skipStepAmount = 1;
+        const skipStepAmount = 0;
         const allSteps = this.steps;
         const hiddenSteps = allSteps.slice(skipStepAmount);
         /** @type {DOMRect[][][]} */
         let allPositionOffsets = [];
-        hideSteps(hiddenSteps);
+        // hideSteps(hiddenSteps);
         let stepCounter = 0;
         let firstRun = true;
         return () => {
@@ -90,8 +91,12 @@ export class StepManager {
             }
             if (stepCounter >= hiddenSteps.length) {
                 stepCounter = 0;
-                hideSteps(allSteps);
-                return;
+                // hideSteps(allSteps);
+                // hideSteps(hiddenSteps);
+                for (const step of allSteps) {
+                    step.domElement.style.backgroundColor = "unset";
+                }
+                // return;
             }
 
             const currentStep = allSteps[stepCounter];
@@ -117,30 +122,41 @@ export class StepManager {
                 }
             }
 
-            currentStep.allStepGroupItems.flat().forEach(x => {
-                const delayMs = 1000;
-                x.domElement.style.transition = `opacity ${delayMs}ms ease, transform ${delayMs}ms ease`;
-                x.domElement.style.border = "1px solid transparent";
+            currentStep.domElement.style.backgroundColor = "red";
 
-                setTimeout(() => {
-                    x.domElement.style.opacity = "60%";
-                }, delayMs / 2);
-                setTimeout(() => {
-                    x.domElement.style.border = "1px solid white";
-                }, delayMs);
-            });
-            nextStep.allStepGroupItems.flat().forEach(x => {
-                const delayMs = 1000;
-                x.domElement.style.transition = `border ${delayMs}ms, opacity ${delayMs}ms ease, transform ${delayMs}ms ease`;
-                setTimeout(() => {
-                    x.domElement.style.border = "1px solid white";
-                    x.domElement.style.opacity = "100%";
-                }, delayMs / 2);
-            });
+            let temp = [...allSteps];
+            let  ci = allSteps.indexOf(currentStep);
+            let hidden = temp.splice(ci);
+            console.log(hidden, temp);
+            hideSteps(hidden);
+            showSteps(temp);
 
-            nextStep.domElement.style.transition = "all 1s ease";
-            nextStep.domElement.style.backgroundColor = "unset";
-            nextStep.domElement.style.borderRadius = "unset";
+
+
+            // currentStep.allStepGroupItems.flat().forEach(x => {
+            //     const delayMs = 1000;
+            //     x.domElement.style.transition = `opacity ${delayMs}ms ease, transform ${delayMs}ms ease`;
+            //     x.domElement.style.border = "1px solid transparent";
+
+            //     setTimeout(() => {
+            //         x.domElement.style.opacity = "60%";
+            //     }, delayMs / 2);
+            //     setTimeout(() => {
+            //         x.domElement.style.border = "1px solid white";
+            //     }, delayMs);
+            // });
+            // nextStep.allStepGroupItems.flat().forEach(x => {
+            //     const delayMs = 1000;
+            //     x.domElement.style.transition = `border ${delayMs}ms, opacity ${delayMs}ms ease, transform ${delayMs}ms ease`;
+            //     setTimeout(() => {
+            //         x.domElement.style.border = "1px solid white";
+            //         x.domElement.style.opacity = "100%";
+            //     }, delayMs / 2);
+            // });
+
+            // nextStep.domElement.style.transition = "all 1s ease";
+            // nextStep.domElement.style.backgroundColor = "unset";
+            // nextStep.domElement.style.borderRadius = "unset";
             stepCounter++;
         };
 
@@ -155,6 +171,20 @@ export class StepManager {
                     x.domElement.style.opacity = "0%";
                     x.domElement.style.transform = "";
                     x.domElement.style.transition = "";
+                });
+            }
+        }
+        /** @param {Step[]} steps */
+        function showSteps(steps) {
+            for (const step of steps) {
+                // step.hide(); // to hide the whole step
+                step.domElement.style.backgroundColor = "rgb(10, 158, 226)";
+                step.domElement.style.borderRadius = "0.5rem";
+
+                step.allStepGroupItems.flat().forEach(x => {
+                    x.domElement.style.opacity = "unset";
+                    x.domElement.style.transform = "unset";
+                    x.domElement.style.transition = "unset";
                 });
             }
         }
