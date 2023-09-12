@@ -81,9 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
     steps[0][0] ==> step1's 1st group
     steps[0][0][0] ==> step1 1st group's 1st element
     */
+
     const input = [[94, 12, 5, 34, 9]];
     const steps = [...mergeSortStepGenerator(input)];
     const stepManager = new StepManager("main", steps);
+
+
+
 
     const nextStepButton = document.querySelector("#nextStepButton");
     if (!nextStepButton) throw new Error("failed to find #nextStepButton html element");
@@ -91,6 +95,24 @@ document.addEventListener("DOMContentLoaded", () => {
 
     mainEl.replaceWith(stepManager.domElement);
 
+    const stepMap = new Map();
+
+    const imgTag4 = () => stepManager.steps[0].stepGroups[0].stepGroupItems[2].domElement.style.border = "3px solid red";
+    const imgTag5 = () => {
+        stepManager.steps[0].stepGroups[0].stepGroupItems[0].domElement.style.border = "3px solid green";
+        stepManager.steps[0].stepGroups[0].stepGroupItems[1].domElement.style.border = "3px solid green";
+    }
+    const imgTag6 = () => {
+        stepManager.steps[0].stepGroups[0].stepGroupItems[2].domElement.style.border = "3px solid blue";
+        stepManager.steps[0].stepGroups[0].stepGroupItems[3].domElement.style.border = "3px solid blue";
+        stepManager.steps[0].stepGroups[0].stepGroupItems[4].domElement.style.border = "3px solid blue";
+    }
+
+    stepMap.set(4, imgTag4);
+    stepMap.set(5, imgTag5);
+    stepMap.set(6, imgTag6);
+    stepMap.set(9, imgTag4);
+    stepMap.set(12, imgTag5);
 
 
     /********Highlighting mergesort code when the button is clicked********* */
@@ -100,6 +122,19 @@ document.addEventListener("DOMContentLoaded", () => {
     if (highlightButton) {
         highlightButton.addEventListener("click", highlightLine);
     }
+
+    const mergeCode = document.getElementById("mergeSortSnippet");
+    if (mergeCode == null) {
+        console.log("Element with ID 'mergeSortSnippet' not found.");
+        return;
+    }
+
+    const lines = mergeCode.innerHTML.split("\n");
+
+    for (let i = 0; i < lines.length; i++) {
+        lines[i] = `${i}    ${lines[i]}`
+    }
+    mergeCode.innerHTML = lines.join("\n");
 
     function highlightLine() {
         const mergeCode = document.getElementById("mergeSortSnippet");
@@ -114,7 +149,13 @@ document.addEventListener("DOMContentLoaded", () => {
             lines[i] = lines[i].replace('<span class="highlighted">', '');
             lines[i] = lines[i].replace('</span>', '');
         }
+        if (stepMap.has(lineCounter)) {
+            for (const item of stepManager.allStepGroupItems.flat(2)) {
+                item.domElement.style.border = "unset";
+            }
 
+            stepMap.get(lineCounter)();
+        }
         lines[linesArr[lineCounter]] = `<span class="highlighted">${lines[linesArr[lineCounter]]}</span>`;
         lineCounter++;
         if (lineCounter == linesArr.length)
@@ -124,6 +165,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function reset() {
         lineCounter = 0;
+        stepMap.clear();
     }
     /**************** */
 });
